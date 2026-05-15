@@ -1,7 +1,8 @@
 package com.project4.TaskManager.security;
 
 
-import com.Project3.E_commerce.models.User;
+
+import com.project4.TaskManager.models.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
