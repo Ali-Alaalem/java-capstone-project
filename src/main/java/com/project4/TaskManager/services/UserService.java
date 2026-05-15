@@ -30,7 +30,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -274,6 +278,15 @@ public class UserService {
             throw new InformationExistException("The Current password is wrong");
         }
 
+    }
+
+    public User ImageUpdater (Authentication authentication, MultipartFile multipartFile) throws IOException {
+        System.out.println("Service is calling createPerson");
+        User user= userRepository.findByEmail(authentication.getName());
+        String imageURL= cloudinary.uploader().upload(multipartFile.getBytes(),
+                Map.of("public_id", UUID.randomUUID().toString())).get("url").toString();
+        user.setProfileImage(imageURL);
+        return this.userRepository.save(user);
     }
 
 }
