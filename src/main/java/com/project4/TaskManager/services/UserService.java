@@ -78,7 +78,7 @@ public class UserService {
     public User createUser(User objectUser){
         if(!userRepository.existsByEmail(objectUser.getEmail())){
             objectUser.setPassword(passwordEncoder.encode(objectUser.getPassword()));
-            Optional<Role> role=roleRepository.findByName("CUSTOMER");
+            Optional<Role> role=roleRepository.findByName("USER");
             objectUser.setRole(role.get());
             objectUser.setIsVerified(false);
             objectUser.setIsDeleted(false);
