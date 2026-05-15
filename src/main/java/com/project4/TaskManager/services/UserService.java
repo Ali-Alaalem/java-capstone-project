@@ -289,4 +289,23 @@ public class UserService {
         return this.userRepository.save(user);
     }
 
+    public User softDeleteUser(Authentication authentication,Long userId){
+        System.out.println("Service calling ==> deleteUser()");
+        Optional<User> forginUser=userRepository.findById(userId);
+        String currentLoggedUserEmail = authentication.getName();
+        User userLoggedIn=userRepository.findByEmail(currentLoggedUserEmail);
+        if(!userLoggedIn.getRole().getName().equals("ADMIN") && forginUser.isPresent()){
+            throw new InformationExistException("User does not have permission or the user wanted to be deleted is not exist");
+        }
+
+        if(forginUser.get().getIsDeleted() ==true){
+            forginUser.get().setIsDeleted(false);
+        }else
+        {
+            forginUser.get().setIsDeleted(true);
+        }
+
+        return userRepository.save(forginUser.get());
+    }
+
 }
