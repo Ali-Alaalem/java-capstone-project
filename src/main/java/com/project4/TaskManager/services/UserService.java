@@ -6,6 +6,7 @@ import com.project4.TaskManager.exceptions.InformationExistException;
 import com.project4.TaskManager.exceptions.InformationNotFoundException;
 import com.project4.TaskManager.models.VerificationToken;
 import com.project4.TaskManager.models.request.LoginRequest;
+import com.project4.TaskManager.models.request.PasswordChangeRequest;
 import com.project4.TaskManager.models.response.LoginResponse;
 import com.project4.TaskManager.repositories.RoleRepository;
 import com.project4.TaskManager.repositories.UserRepository;
@@ -113,10 +114,6 @@ public class UserService {
 
         if (user.getEmail() != null) {
             existingUser.get().setEmail(user.getEmail());
-        }
-
-        if (user.getProfileImage() != null) {
-            existingUser.get().setProfileImage(user.getProfileImage());
         }
 
         return Optional.of(userRepository.save(existingUser.get()));
@@ -262,6 +259,21 @@ public class UserService {
             userRepository.save(user);
             verificationTokenRepository.delete(userToken.get());
         }
+    }
+
+
+    public String ChangePassword(Authentication authentication, PasswordChangeRequest request) {
+        String currentLoggedUserEmail = authentication.getName();
+        User userLoggedIn=userRepository.findByEmail(currentLoggedUserEmail);
+
+        if( passwordEncoder.matches(request.getCurrentPassword(),userLoggedIn.getPassword())){
+            userLoggedIn.setPassword(passwordEncoder.encode(request.getNewPassword()));
+            userRepository.save(userLoggedIn);
+            return "User password has been changed successfully";
+        }else {
+            throw new InformationExistException("The Current password is wrong");
+        }
+
     }
 
 }
